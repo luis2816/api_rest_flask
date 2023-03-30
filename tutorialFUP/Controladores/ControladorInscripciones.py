@@ -1,5 +1,10 @@
 from tutorialFUP.Modelos.Inscripcion import Inscripcion
+from tutorialFUP.Modelos.Estudiante import Estudiante
+from  tutorialFUP.Modelos.Materia import Materia
+
 from tutorialFUP.Repositorios.RepositorioInscripcion import RepositorioInscripcion
+from tutorialFUP.Repositorios.RepositorioEstudiante import RepositorioEstudiante
+from tutorialFUP.Repositorios.RepositorioMateria import RepositorioMateria
 
 
 """
@@ -15,15 +20,23 @@ class ControladorInscripcion():
    def __init__(self):
        print("Creando ControladorInscripcion")
        self.repositorioInscripcion = RepositorioInscripcion();
+       self.repositorioEstudiante = RepositorioEstudiante();
+       self.repositorioMateria = RepositorioMateria();
+
 
 
    def index(self):
        print("Listar todos las Inscripciones")
        return self.repositorioInscripcion.findAll()
 
-   def create(self, laInscripcion):
+   def create(self, infoInscripcion, id_estudiante , id_materia):
        print("Crear una inscripción")
-       nuevaInscripcion = Inscripcion(laInscripcion)
+
+       nuevaInscripcion = Inscripcion(infoInscripcion)
+       elEstudiante = Estudiante(self.repositorioEstudiante.findById(id_estudiante))
+       laMateria = Materia(self.repositorioMateria.findById(id_materia))
+       nuevaInscripcion.estudiante = elEstudiante
+       nuevaInscripcion.materia= laMateria
        return self.repositorioInscripcion.save(nuevaInscripcion)
 
 
@@ -33,12 +46,16 @@ class ControladorInscripcion():
        return laInscripcion.__dict__
 
 
-   def update(self, id, laInscripcion):
+   def update(self, id, infoInscripcion, id_estudiante , id_materia):
        print("Actualizando Inscripción con id ", id)
        InscripcionActual = Inscripcion(self.repositorioInscripcion.findById(id))
-       InscripcionActual.año = laInscripcion["año"]
-       InscripcionActual.nota_final = laInscripcion["nota_final"]
-       InscripcionActual.semestre = laInscripcion["semestre"]
+       InscripcionActual.anio = infoInscripcion["año"]
+       InscripcionActual.nota_final = infoInscripcion["nota_final"]
+       InscripcionActual.semestre = infoInscripcion["semestre"]
+       elEstudiante= Estudiante(self.repositorioEstudiante.findById(id_estudiante))
+       laMateria= Materia(self.repositorioMateria.findById(id_materia))
+       InscripcionActual.estudiante= elEstudiante
+       InscripcionActual.materia= laMateria
        return self.repositorioInscripcion.save(InscripcionActual)
 
 

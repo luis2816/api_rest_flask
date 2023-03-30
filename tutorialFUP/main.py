@@ -1,3 +1,5 @@
+from crypt import methods
+
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -132,6 +134,11 @@ def eliminarMateria(id):
     json = miControladorMateria.delete(id)
     return jsonify(json)
 
+@app.route("/materias/<string:id>/departamentos/<string:id_departamento>", methods=['PUT'])
+def asignarDepartamentoMateria(id,id_departamento):
+    json=miControladorMateria.asignarDepartamento(id, id_departamento)
+    return  jsonify(json)
+
 
 """ Servicios de la entidad Inscripción"""
 
@@ -142,10 +149,10 @@ def getInscripciones():
     return jsonify(json)
 
 
-@app.route("/inscripciones", methods=['POST'])
-def crearInscripcion():
+@app.route("/inscripciones/estudiante/<string:id_estudiante>/materia/<string:id_materia>", methods=['POST'])
+def crearInscripcion(id_estudiante, id_materia):
     data = request.get_json()
-    json = miControladorInscripcion.create(data)
+    json = miControladorInscripcion.create(data, id_estudiante, id_materia)
     return jsonify(json)
 
 
@@ -155,10 +162,10 @@ def getinscripcion(id):
     return jsonify(json)
 
 
-@app.route("/inscripciones/<string:id>", methods=['PUT'])
-def modificarInscripcion(id):
+@app.route("/inscripciones/<string:id_inscripcion>/estudiante/<string:id_estudiante>/materia/<string:id_materia>", methods=['PUT'])
+def modificarInscripcion(id_inscripcion, id_estudiante, id_materia):
     data = request.get_json()
-    json = miControladorInscripcion.update(id, data)
+    json = miControladorInscripcion.update(id_inscripcion, data, id_estudiante, id_materia)
     return jsonify(json)
 
 
@@ -166,6 +173,8 @@ def modificarInscripcion(id):
 def eliminarInscripcion(id):
     json = miControladorInscripcion.delete(id)
     return jsonify(json)
+
+
 
 
 @app.route("/", methods=['GET'])
